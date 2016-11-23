@@ -18,8 +18,24 @@
     <CheckBox
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/workCompleted"
-        android:focusable="false"
-        android:focusableInTouchMode="false"/>
+        android:id="@+id/workCompleted"/>
+
+    <ImageButton
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:id="@+id/setDateAndTime"
+        android:src="@android:drawable/ic_menu_today"/>
+
+    <ImageButton
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:id="@+id/alarm"
+        android:src="@android:drawable/ic_lock_idle_alarm"/>
+
+    <ImageButton
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:id="@+id/cancel"
+        android:src="@drawable/ic_cancel"/>
 
 </LinearLayout>

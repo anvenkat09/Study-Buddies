@@ -3,8 +3,8 @@
     android:layout_height="match_parent"
     android:id="@+id/secondLayout"
     android:paddingBottom="16dp"
-    android:paddingLeft="64dp"
-    android:paddingRight="64dp"
+    android:paddingLeft="30dp"
+    android:paddingRight="30dp"
     android:paddingTop="16dp"
     android:orientation="vertical">
 
@@ -13,23 +13,30 @@
         android:layout_height="wrap_content"
         android:hint="Add new work..."
         android:id="@+id/addNewWork"
-        android:layout_weight="0.90"
+        android:lines="1"
         android:imeOptions="actionDone"
-        android:maxLines="1"/>
+        android:maxLines="1"
+        android:layout_toLeftOf="@+id/confirmWork"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Add Work"
-        android:layout_toRightOf="@+id/addNewWork"
         android:id="@+id/confirmWork"
-        android:layout_marginRight="2dp" />
+        android:layout_alignBaseline="@+id/addNewWork"
+        android:layout_alignBottom="@+id/addNewWork"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 
     <ListView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/confirmWork"
-        android:id="@+id/workView">
+        android:layout_below="@+id/addNewWork"
+        android:id="@+id/workView"
+        android:layout_marginBottom="?attr/actionBarSize"
+        android:transcriptMode="alwaysScroll">
     </ListView>
 
 </RelativeLayout>
