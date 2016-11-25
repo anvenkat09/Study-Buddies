@@ -6,8 +6,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
-import java.util.Calendar;
-
 /**
  * Created by aniru on 11/22/2016.
  */

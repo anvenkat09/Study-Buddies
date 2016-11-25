@@ -6,26 +6,21 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.annotation.NonNull;
-import android.support.v4.app.FragmentManager;
-import android.support.v7.app.ActionBar;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Class "Class" which allows us to instantiate an object of type class. It can hold the name of
@@ -244,6 +239,12 @@ public class ClassListActivity extends AppCompatActivity {
                 Intent i = new Intent(this, ClassListActivity.class);
                 startActivity(i);
                 break;
+            case R.id.calendar:
+                Intent calendarStarter = new Intent(getApplicationContext(), CalendarActivity.class);
+                Log.e("fuck", classes.get(0).getClassName());
+                calendarStarter.putParcelableArrayListExtra("classes", classes);
+                startActivity(calendarStarter);
+                break;
             default:
                 break;
         }
@@ -340,4 +341,6 @@ public class ClassListActivity extends AppCompatActivity {
             progress.setProgress(50); //currently displays as 50%
         }
     }
+
+
 }
