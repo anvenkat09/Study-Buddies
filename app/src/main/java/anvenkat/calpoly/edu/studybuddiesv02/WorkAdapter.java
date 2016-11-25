@@ -34,9 +34,10 @@ public class WorkAdapter extends ArrayAdapter<Work> implements DatePickerDialog.
     private ArrayList<Work> workList;
     private int day = 0, year = 0, month = 0;
     private int second = 0, minute = 0, hour = 0;
-    private int id;
     private AlarmManager alarm;
     private TextView workName;
+    private String workNameTag;
+    private int positionTag, cancelTag;
     PendingIntent intentV;
     Intent intent;
     private ImageButton setDT, setAlarm, cancelAlarm;
@@ -57,15 +58,17 @@ public class WorkAdapter extends ArrayAdapter<Work> implements DatePickerDialog.
     }
 
     public View getView(int position, View convertView, ViewGroup parent){
-        id = position;
         LayoutInflater inf = LayoutInflater.from(getContext());
         View menuL = inf.inflate(R.layout.class_detail_workview_detail, parent, false);
 
         workName = (TextView)menuL.findViewById(R.id.workName);
         CheckBox workBox = (CheckBox)menuL.findViewById(R.id.workCompleted);
+
         setDT = (ImageButton)menuL.findViewById(R.id.setDateAndTime);
-        setAlarm = (ImageButton)menuL.findViewById(R.id.alarm);
+        setDT.setTag(position);
+
         cancelAlarm = (ImageButton)menuL.findViewById(R.id.cancel);
+        cancelAlarm.setTag(position);
 
         final Work w = getItem(position);
         workName.setText(w.getToDo().toString());
@@ -84,44 +87,23 @@ public class WorkAdapter extends ArrayAdapter<Work> implements DatePickerDialog.
         setDT.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                positionTag = (Integer)view.getTag();
+                final Work w = getItem(positionTag);
+                workNameTag = w.getToDo().toString();
                 Calendar date = Calendar.getInstance();
                 DatePickerDialog dateChooser = new DatePickerDialog(getContext(), WorkAdapter.this,
                         date.get(Calendar.YEAR), date.get(Calendar.MONTH), date.get(Calendar.DAY_OF_MONTH));
                 dateChooser.show();
             }
         });
-
-        /**
-         * sets the alarm for the specified time
-         */
-        setAlarm.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Calendar c = Calendar.getInstance();
-                c.set(Calendar.DATE, day);
-                c.set(Calendar.MONTH, month);
-                c.set(Calendar.YEAR, year);
-
-                c.set(Calendar.HOUR_OF_DAY, hour);
-                c.set(Calendar.MINUTE, minute);
-                c.set(Calendar.SECOND, second);
-                Toast.makeText(getContext(), "alarm set to: " + hour + ":" + minute, Toast.LENGTH_SHORT).show();
-
-                intent = new Intent(getContext(), NotificationBroadcaster.class);
-                intent.putExtra("nameofwork", workName.getText().toString());
-                intentV = PendingIntent.getBroadcast(getContext(), id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-                alarm = (AlarmManager) getContext().getSystemService(ALARM_SERVICE);
-                alarm.set(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), intentV);
-            }
-        });
-
         /**
          * cancels the specific pending intent
          */
         cancelAlarm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                PendingIntent.getBroadcast(getContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT).cancel();
+                cancelTag = (Integer)view.getTag();
+                PendingIntent.getBroadcast(getContext(), cancelTag, intent, PendingIntent.FLAG_UPDATE_CURRENT).cancel();
             }
         });
 
@@ -144,5 +126,27 @@ public class WorkAdapter extends ArrayAdapter<Work> implements DatePickerDialog.
         minute = i1;
         second = 0;
         hour = i;
+
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.DATE, day);
+        c.set(Calendar.MONTH, month);
+        c.set(Calendar.YEAR, year);
+
+        c.set(Calendar.HOUR_OF_DAY, hour);
+        c.set(Calendar.MINUTE, minute);
+        c.set(Calendar.SECOND, second);
+        //Toast.makeText(getContext(), "alarm set to: " + hour + ":" + minute, Toast.LENGTH_SHORT).show();
+
+        Toast.makeText(getContext(), ""+positionTag, Toast.LENGTH_SHORT).show();
+        intent = new Intent(getContext(), NotificationBroadcaster.class);
+        intent.putExtra("nameofwork", workNameTag);
+        intent.putExtra("id", positionTag);
+        intentV = PendingIntent.getBroadcast(getContext(), positionTag, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        alarm = (AlarmManager) getContext().getSystemService(ALARM_SERVICE);
+        if (android.os.Build.VERSION.SDK_INT >= 19) {
+            alarm.setExact(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), intentV);
+        } else {
+            alarm.set(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), intentV);
+        }
     }
 }

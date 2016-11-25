@@ -24,12 +24,6 @@
         android:layout_width="32dp"
         android:layout_height="32dp"
         android:id="@+id/setDateAndTime"
-        android:src="@android:drawable/ic_menu_today"/>
-
-    <ImageButton
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:id="@+id/alarm"
         android:src="@android:drawable/ic_lock_idle_alarm"/>
 
     <ImageButton
