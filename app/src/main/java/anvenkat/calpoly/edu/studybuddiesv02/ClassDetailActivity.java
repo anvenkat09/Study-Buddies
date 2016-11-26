@@ -2,14 +2,11 @@ package anvenkat.calpoly.edu.studybuddiesv02;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.widget.Toolbar;
-import android.view.View;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.ActionBar;
-import android.support.v4.app.NavUtils;
-import android.view.MenuItem;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+
+import java.util.ArrayList;
 
 /**
  * An activity representing a single Class detail screen. This
@@ -17,9 +14,10 @@ import android.view.MenuItem;
  * item details are presented side-by-side with a list of items
  * in a {@link ClassListActivity}.
  */
-public class ClassDetailActivity extends AppCompatActivity {
+public class ClassDetailActivity extends AppCompatActivity implements ClassDetailFragment.CallMain{
     private Class c;
     private int index;
+    private ArrayList<Work> toReturn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,11 +40,12 @@ public class ClassDetailActivity extends AppCompatActivity {
         //
         // http://developer.android.com/guide/components/fragments.html
         //
-        if (savedInstanceState == null) {
+        //if (savedInstanceState == null) {
             // Create the detail fragment and add it to the activity
             // using a fragment transaction.
             Bundle arguments = getIntent().getExtras();
             c = arguments.getParcelable("class");
+            toReturn = c.getWork();
             index = arguments.getInt("index");
 
             arguments.putParcelable("class", c); //sends the class to the fragment
@@ -57,6 +56,34 @@ public class ClassDetailActivity extends AppCompatActivity {
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.class_detail_container, fragment)
                     .commit();
-        }
+        //}
+    }
+
+    @Override
+    public void setWork(ArrayList<Work> toSet, int index) {
+        toReturn = toSet;
+
+    }
+
+    @Override
+    public void finish() {
+        Intent intent = new Intent();
+        intent.putParcelableArrayListExtra("workList", toReturn);
+        intent.putExtra("index", index);
+        setResult(RESULT_OK, intent);
+
+        super.finish();
+    }
+    public void onBackPressed(){
+
+        finish();
+        //super.onPause();
+
+
+
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
     }
 }

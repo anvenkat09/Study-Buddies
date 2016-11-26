@@ -6,7 +6,6 @@ import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +25,7 @@ import static android.content.Context.ALARM_SERVICE;
 
 /**
  * Created by aniru on 11/21/2016.
+ *
  */
 
 public class WorkAdapter extends ArrayAdapter<Work> implements DatePickerDialog.OnDateSetListener,
@@ -132,6 +132,10 @@ public class WorkAdapter extends ArrayAdapter<Work> implements DatePickerDialog.
         c.set(Calendar.MONTH, month);
         c.set(Calendar.YEAR, year);
 
+        workList.get(positionTag).setDay(day);
+        workList.get(positionTag).setMonth(month);
+        workList.get(positionTag).setYear(year);
+
         c.set(Calendar.HOUR_OF_DAY, hour);
         c.set(Calendar.MINUTE, minute);
         c.set(Calendar.SECOND, second);
@@ -148,5 +152,9 @@ public class WorkAdapter extends ArrayAdapter<Work> implements DatePickerDialog.
         } else {
             alarm.set(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), intentV);
         }
+    }
+
+    public ArrayList<Work> getAlarms(){
+        return workList;
     }
 }

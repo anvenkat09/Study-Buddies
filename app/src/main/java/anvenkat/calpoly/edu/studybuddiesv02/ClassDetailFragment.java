@@ -1,18 +1,15 @@
 package anvenkat.calpoly.edu.studybuddiesv02;
 
 import android.app.Activity;
-import android.support.design.widget.CollapsingToolbarLayout;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import android.support.design.widget.CollapsingToolbarLayout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -22,14 +19,14 @@ import java.util.ArrayList;
  * in two-pane mode (on tablets) or a {@link ClassDetailActivity}
  * on handsets.
  */
-public class ClassDetailFragment extends Fragment {
+public class ClassDetailFragment extends ContractFragment<ClassDetailFragment.CallMain>  {
     private Class c;
     private int index;
     private ListView wView;
     private EditText newWork;
     private Button confirmWork;
     ArrayList<Work> workList;
-    private ArrayAdapter<Work> arrayAdapter;
+    private WorkAdapter arrayAdapter;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -70,6 +67,7 @@ public class ClassDetailFragment extends Fragment {
                     w.setToDo(nameOfWork);
                     w.setCompleted(false);
                     arrayAdapter.add(w);
+                    getContract().setWork(workList, index);
                     arrayAdapter.notifyDataSetChanged();
                 }
             }
@@ -77,4 +75,38 @@ public class ClassDetailFragment extends Fragment {
 
         return rootView;
     }
+
+
+
+
+    @Override
+    public void onPause() {
+        Log.e("?", "Test");
+        ArrayList<Work> alarms = arrayAdapter.getAlarms();
+        //This is kind of a back hack because the day/month/year is being done in the work adapter instead of this class
+        //There is no other way to communicate between the adapter and list
+        //Thanks Obama..
+        for(int i = 0; i < alarms.size(); i++) {
+            workList.get(i).setDay(alarms.get(i).day);
+            workList.get(i).setMonth(alarms.get(i).month);
+            workList.get(i).setYear(alarms.get(i).year);
+        }
+
+        getContract().setWork(workList, index);
+        arrayAdapter.notifyDataSetChanged();
+
+
+
+
+        super.onPause();
+    }
+
+
+
+    public interface CallMain {
+        public void setWork(ArrayList<Work> toSet, int index);
+
+    }
+
+
 }

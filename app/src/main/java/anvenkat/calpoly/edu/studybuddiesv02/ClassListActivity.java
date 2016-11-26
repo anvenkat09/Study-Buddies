@@ -20,6 +20,14 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 
 /**
@@ -30,6 +38,8 @@ import java.util.ArrayList;
 class Class implements Parcelable {
     ArrayList<Work> work = new ArrayList<Work>(); //holds the stuff that is due
     String classname; //holds the name of the class
+
+
 
     public Class(String name){
         this.classname = name;
@@ -54,6 +64,8 @@ class Class implements Parcelable {
     public int describeContents(){
         return 0;
     }
+
+
 
     public void writeToParcel(Parcel out, int flags){
         out.writeTypedList(work);
@@ -84,6 +96,9 @@ class Class implements Parcelable {
 class Work implements Parcelable{
     private String toDo; //name of the assignment or test
     private boolean completed; // has it been completed
+    int day;
+    int month;
+    int year;
 
     public boolean getCompleted() {
         return completed;
@@ -100,6 +115,29 @@ class Work implements Parcelable{
     public void setToDo(String toDo) {
         this.toDo = toDo;
     }
+    public void setDay(int day) {
+        this.day = day;
+    }
+
+    public void setMonth(int month) {
+        this.month = month;
+    }
+
+    public void setYear(int year) {
+        this.year = year;
+    }
+
+    public int getDay() {
+        return day;
+    }
+
+    public int getMonth() {
+        return month;
+    }
+
+    public int getYear(){
+        return year;
+    }
 
     public int describeContents(){
         return 0;
@@ -109,6 +147,11 @@ class Work implements Parcelable{
         boolean[] arr = new boolean[1];
         arr[0] = completed;
         out.writeBooleanArray(arr);
+
+        //Write the paramaters of the alarm, eg the date the assignment is due
+        out.writeInt(day);
+        out.writeInt(month);
+        out.writeInt(year);
     }
 
     public static final Parcelable.Creator<Work> CREATOR = new Parcelable.Creator<Work>() {
@@ -117,8 +160,13 @@ class Work implements Parcelable{
             boolean[] arr = new boolean[1];
             String toDoName = in.readString();
             in.readBooleanArray(arr);
+
+            //Set the paramaters of the work
             w.setToDo(toDoName);
             w.setCompleted(arr[0]);
+            w.setDay(in.readInt());
+            w.setMonth(in.readInt());
+            w.setYear(in.readInt());
             return w;
         }
 
@@ -137,7 +185,7 @@ class Work implements Parcelable{
  * item details. On tablets, the activity presents the list of items and
  * item details side-by-side using two vertical panes.
  */
-public class ClassListActivity extends AppCompatActivity {
+public class ClassListActivity extends AppCompatActivity implements ClassDetailFragment.CallMain{
 
     /**
      * Whether or not the activity is in two-pane mode, i.e. running on a tablet
@@ -145,10 +193,12 @@ public class ClassListActivity extends AppCompatActivity {
      */
     private boolean mTwoPane;
     private int currPos = -1; //used for maintaining highlight position of current item selected
-    private final int REQUEST_CODE = 1; //request code used to get information back from intent
+    private final int REQUEST_CODE_ADD_CLASS = 1; //request code used to get information back from intent\
+    private final int REQUEST_CODE_ADD_WORK = 2;
     private ArrayList<Class> classes;
     private ClassAdapter set = null;
     private RecyclerView r;
+    private boolean activityReturned = false;
 
 
     @Override
@@ -169,7 +219,7 @@ public class ClassListActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent classAdder = new Intent(getApplicationContext(), AddClass.class);
-                startActivityForResult(classAdder, REQUEST_CODE);
+                startActivityForResult(classAdder, REQUEST_CODE_ADD_CLASS);
             }
         });
 
@@ -209,16 +259,25 @@ public class ClassListActivity extends AppCompatActivity {
      * and adds the string to the class list adapter.
      * @param requestCode
      * @param resultCode
-     * @param classAdderIntent
+     * @param returnedIntent
      * @Author: Ani
      */
-    protected void onActivityResult(int requestCode, int resultCode, Intent classAdderIntent){
+    protected void onActivityResult(int requestCode, int resultCode, Intent returnedIntent){
+        activityReturned = true;
         if(resultCode == RESULT_OK){
             switch(requestCode){
-                case REQUEST_CODE:
-                    Class c = classAdderIntent.getExtras().getParcelable("class");
+                case REQUEST_CODE_ADD_CLASS:
+                    Class c = returnedIntent.getExtras().getParcelable("class");
+                    c.setWork(new ArrayList<Work>());
                     classes.add(c);
                     set.notifyDataSetChanged();
+                    break;
+                case REQUEST_CODE_ADD_WORK:
+                    ArrayList<Work>workList = returnedIntent.getExtras().getParcelableArrayList("workList");
+                    int idx = returnedIntent.getExtras().getInt("index");
+                    classes.get(idx).setWork(workList);
+                    set.notifyDataSetChanged();
+
                     break;
                 default:
                     break;
@@ -241,7 +300,6 @@ public class ClassListActivity extends AppCompatActivity {
                 break;
             case R.id.calendar:
                 Intent calendarStarter = new Intent(getApplicationContext(), CalendarActivity.class);
-                Log.e("fuck", classes.get(0).getClassName());
                 calendarStarter.putParcelableArrayListExtra("classes", classes);
                 startActivity(calendarStarter);
                 break;
@@ -249,6 +307,88 @@ public class ClassListActivity extends AppCompatActivity {
                 break;
         }
         return true;
+    }
+    //Simple code to read from file and convert to string, credit to stackOverflow for this one
+    private String readFromFile(Context context)throws Exception {
+
+        String ret = "";
+        Log.e("?", "?");
+        InputStream inputStream = context.openFileInput("config.txt");
+
+        if ( inputStream != null ) {
+            InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+            String receiveString = "";
+            StringBuilder stringBuilder = new StringBuilder();
+
+            while ( (receiveString = bufferedReader.readLine()) != null ) {
+                stringBuilder.append(receiveString);
+            }
+
+            inputStream.close();
+            ret = stringBuilder.toString();
+        }
+
+
+        return ret;
+    }
+    //Simple method to write to a file named config
+
+    private void writeToFile(String data,Context context) {
+        try {
+            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput("config.txt", Context.MODE_PRIVATE));
+            outputStreamWriter.write(data);
+            outputStreamWriter.close();
+        }
+        catch (IOException e) {
+            Log.e("Exception", "File write failed: " + e.toString());
+        }
+    }
+
+    //On Pause, assume the device is closing. When a pause occurs write the current class list
+    //to a file
+    protected void onPause(){
+        Gson gson = new Gson();
+        String toStore = gson.toJson(classes);
+        writeToFile(toStore, this);
+        super.onPause();
+    }
+
+    //On resume restore the app from the file  UNLESS an activity just returned!!
+    protected void onResume(){
+        Gson gson = new Gson();
+
+        //Dont read from file if an activity returned
+        //This will cause overwrites from the file instead of adding to the array what the activity actually returns
+        if(!activityReturned) {
+            //Enter catch if the config file is lost or distorted
+            try {
+                String json = readFromFile(this);
+                //Make sure there is json, if not just make a new classlist
+                if (json.length() > 0)
+                    classes = gson.fromJson(json, new TypeToken<ArrayList<Class>>() {
+                    }.getType());
+                else
+                    classes = new ArrayList<Class>();
+            } catch (Exception E) {
+
+                classes = new ArrayList<Class>();
+
+            }
+
+            set = new ClassAdapter(classes, this);
+            r.setAdapter(set); //sets the adapter so that it can be updated when new classes are added.
+        } else {
+            //if the activity just returned, no need to read from the file, just unset the flag
+            activityReturned = false;
+        }
+        super.onResume();
+
+    }
+
+    @Override
+    public void setWork(ArrayList<Work> toSet, int index) {
+        classes.get(index).setWork(new ArrayList<Work>(toSet));
     }
 
     /**
@@ -310,7 +450,7 @@ public class ClassListActivity extends AppCompatActivity {
                         Intent sendIntent = new Intent(getApplicationContext(), ClassDetailActivity.class);
                         sendIntent.putExtra("class", c);
                         sendIntent.putExtra("index", position);
-                        startActivityForResult(sendIntent, 1);
+                        startActivityForResult(sendIntent, REQUEST_CODE_ADD_WORK);
                     }
                     notifyItemChanged(currPos);
                     currPos = position;
@@ -338,9 +478,19 @@ public class ClassListActivity extends AppCompatActivity {
         public void bind(Class option) {
             this.classData = option;
             textd.setText(classData.getClassName());
-            progress.setProgress(50); //currently displays as 50%
+            int finishedCount = 0;
+            try {
+                for (int i = 0; i < classData.getWork().size(); i++)
+                    finishedCount += classData.getWork().get(i).getCompleted() ? 1 : 0;
+
+            progress.setProgress(100*finishedCount/classData.getWork().size()); //currently displays as 50%
+            }catch (Exception E){
+                //E.printStackTrace();
+            }
+
         }
     }
+
 
 
 }
