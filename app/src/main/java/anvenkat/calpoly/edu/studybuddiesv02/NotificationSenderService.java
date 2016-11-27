@@ -30,7 +30,6 @@ public class NotificationSenderService extends Service {
         Bundle b = intent.getExtras();
         workName = b.getString("nameofwork");
         id = b.getInt("id");
-        Log.i("id", ""+id);
         Intent i = new Intent(this, ClassListActivity.class);
         NotificationManager mNotificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
         PendingIntent pi = PendingIntent.getActivity(this, id, i, PendingIntent.FLAG_UPDATE_CURRENT);

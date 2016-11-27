@@ -103,7 +103,11 @@ public class WorkAdapter extends ArrayAdapter<Work> implements DatePickerDialog.
             @Override
             public void onClick(View view) {
                 cancelTag = (Integer)view.getTag();
-                PendingIntent.getBroadcast(getContext(), cancelTag, intent, PendingIntent.FLAG_UPDATE_CURRENT).cancel();
+                intent = new Intent(getContext(), NotificationBroadcaster.class);
+                final PendingIntent pendingIntent = PendingIntent.getBroadcast(getContext(), cancelTag, intent, PendingIntent.FLAG_NO_CREATE);
+                if (pendingIntent != null) {
+                    pendingIntent.cancel();
+                }
             }
         });
 
@@ -139,9 +143,8 @@ public class WorkAdapter extends ArrayAdapter<Work> implements DatePickerDialog.
         c.set(Calendar.HOUR_OF_DAY, hour);
         c.set(Calendar.MINUTE, minute);
         c.set(Calendar.SECOND, second);
-        //Toast.makeText(getContext(), "alarm set to: " + hour + ":" + minute, Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), "alarm set to: " + hour + ":" + minute, Toast.LENGTH_SHORT).show();
 
-        Toast.makeText(getContext(), ""+positionTag, Toast.LENGTH_SHORT).show();
         intent = new Intent(getContext(), NotificationBroadcaster.class);
         intent.putExtra("nameofwork", workNameTag);
         intent.putExtra("id", positionTag);

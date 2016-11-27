@@ -13,7 +13,6 @@
         android:layout_height="wrap_content"
         android:hint="Add new work..."
         android:id="@+id/addNewWork"
-        android:lines="1"
         android:imeOptions="actionDone"
         android:maxLines="1"
         android:layout_toLeftOf="@+id/confirmWork"
@@ -32,11 +31,10 @@
 
     <ListView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_below="@+id/addNewWork"
-        android:id="@+id/workView"
-        android:layout_marginBottom="?attr/actionBarSize"
-        android:transcriptMode="alwaysScroll">
+        android:nestedScrollingEnabled="true"
+        android:id="@+id/workView">
     </ListView>
 
 </RelativeLayout>
