@@ -1,6 +1,7 @@
 package anvenkat.calpoly.edu.studybuddiesv02;
 
 import android.content.ContentValues;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -60,13 +61,21 @@ public class CalendarActivity extends AppCompatActivity {
         calendar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
             }
         });
         calendar.setOnDayClickListener(new ExtendedCalendarView.OnDayClickListener() {
             @Override
             public void onDayClicked(AdapterView<?> adapter, View view, int position, long id, Day day) {
                 //Toast.makeText(this, "Day: " + day.g)
+                String key = day.getDay() + "-" + day.getMonth() + "-" + day.getYear();
+                Log.e("?", key);
+                Intent sendIntent = new Intent(getApplicationContext(), CalendarSelectedDayActivity.class);
+                if(workPerDay.containsKey(key)) {
+                    sendIntent.putExtra("toAdd", workPerDay.get(key));
+                }else{
+                    sendIntent.putExtra("toAdd", new ArrayList<Work>());
+                }
+                startActivity(sendIntent);
             }
         });
         getContentResolver().delete(CalendarProvider.CONTENT_URI, null, null);
