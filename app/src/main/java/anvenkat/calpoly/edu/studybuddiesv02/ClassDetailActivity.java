@@ -2,6 +2,7 @@ package anvenkat.calpoly.edu.studybuddiesv02;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -17,19 +18,18 @@ import java.util.ArrayList;
 public class ClassDetailActivity extends AppCompatActivity implements ClassDetailFragment.CallMain{
     private Class c;
     private int index;
+    private String title;
     private ArrayList<Work> toReturn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_class_detail);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.detail_toolbar);
-        setSupportActionBar(toolbar);
+
 
         // Show the Up button in the action bar.
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-        }
+        //ActionBar actionBar = getSupportActionBar();
+        //Toolbar toolbar = (Toolbar) findViewById(R.id.detail_toolbar);
 
         // savedInstanceState is non-null when there is fragment state
         // saved from previous configurations of this activity
@@ -40,23 +40,26 @@ public class ClassDetailActivity extends AppCompatActivity implements ClassDetai
         //
         // http://developer.android.com/guide/components/fragments.html
         //
-        //if (savedInstanceState == null) {
+        if (savedInstanceState == null) {
             // Create the detail fragment and add it to the activity
             // using a fragment transaction.
             Bundle arguments = getIntent().getExtras();
             c = arguments.getParcelable("class");
             toReturn = c.getWork();
             index = arguments.getInt("index");
+            //title = arguments.getString("title");
+            title = c.getClassName();
 
             arguments.putParcelable("class", c); //sends the class to the fragment
             arguments.putInt("index", index); // sends the current position to the fragment
+            arguments.putString("title", title);
 
             ClassDetailFragment fragment = new ClassDetailFragment();
             fragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.class_detail_container, fragment)
+                    .replace(R.id.class_detail_container, fragment)
                     .commit();
-        //}
+        }
     }
 
     @Override
@@ -85,5 +88,13 @@ public class ClassDetailActivity extends AppCompatActivity implements ClassDetai
     @Override
     protected void onPause() {
         super.onPause();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putParcelable("class", c);
+        outState.putInt("index", index);
+        outState.putString("title", title);
+        super.onSaveInstanceState(outState);
     }
 }
