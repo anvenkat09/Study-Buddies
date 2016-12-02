@@ -1,11 +1,13 @@
 package anvenkat.calpoly.edu.studybuddiesv02;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -18,8 +20,7 @@ import java.util.ArrayList;
 public class ClassDetailActivity extends AppCompatActivity implements ClassDetailFragment.CallMain{
     private Class c;
     private int index;
-    private String title;
-    private ArrayList<Work> toReturn;
+    private ArrayList<Work> toReturn = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,12 +48,8 @@ public class ClassDetailActivity extends AppCompatActivity implements ClassDetai
             c = arguments.getParcelable("class");
             toReturn = c.getWork();
             index = arguments.getInt("index");
-            //title = arguments.getString("title");
-            title = c.getClassName();
-
             arguments.putParcelable("class", c); //sends the class to the fragment
             arguments.putInt("index", index); // sends the current position to the fragment
-            arguments.putString("title", title);
 
             ClassDetailFragment fragment = new ClassDetailFragment();
             fragment.setArguments(arguments);
@@ -60,31 +57,32 @@ public class ClassDetailActivity extends AppCompatActivity implements ClassDetai
                     .replace(R.id.class_detail_container, fragment)
                     .commit();
         }
+        else{
+            toReturn = savedInstanceState.getParcelableArrayList("workList");
+            c = savedInstanceState.getParcelable("class");
+            index = savedInstanceState.getInt("index");
+        }
     }
 
     @Override
     public void setWork(ArrayList<Work> toSet, int index) {
         toReturn = toSet;
-
     }
 
     @Override
     public void finish() {
-        Intent intent = new Intent();
-        intent.putParcelableArrayListExtra("workList", toReturn);
-        intent.putExtra("index", index);
-        setResult(RESULT_OK, intent);
-
         super.finish();
     }
     public void onBackPressed(){
-
-        finish();
-        //super.onPause();
-
-
-
+        Intent intent = new Intent();
+        if(toReturn != null) {
+            intent.putParcelableArrayListExtra("workList", toReturn);
+        }
+        intent.putExtra("index", index);
+        setResult(Activity.RESULT_OK, intent);
+        super.onBackPressed();
     }
+
     @Override
     protected void onPause() {
         super.onPause();
@@ -93,8 +91,8 @@ public class ClassDetailActivity extends AppCompatActivity implements ClassDetai
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putParcelable("class", c);
+        outState.putParcelableArrayList("workList", toReturn);
         outState.putInt("index", index);
-        outState.putString("title", title);
         super.onSaveInstanceState(outState);
     }
 }

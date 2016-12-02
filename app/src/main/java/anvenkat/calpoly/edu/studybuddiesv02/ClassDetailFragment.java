@@ -43,15 +43,18 @@ public class ClassDetailFragment extends ContractFragment<ClassDetailFragment.Ca
         index = getArguments().getInt("index");
         workList = c.getWork();
         arrayAdapter = new WorkAdapter(getContext(), workList);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        /**
+         * prints name of class at top and persists on rotate.
+         */
         Activity activity = this.getActivity();
         CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);
         if (appBarLayout != null) {
             appBarLayout.setTitle(c.getClassName());
         }
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.class_detail, container, false);
         wView = (ListView) rootView.findViewById(R.id.workView);
         newWork = (EditText) rootView.findViewById(R.id.addNewWork);
@@ -72,12 +75,8 @@ public class ClassDetailFragment extends ContractFragment<ClassDetailFragment.Ca
                 }
             }
         });
-
         return rootView;
     }
-
-
-
 
     @Override
     public void onPause() {
@@ -92,21 +91,15 @@ public class ClassDetailFragment extends ContractFragment<ClassDetailFragment.Ca
             workList.get(i).setYear(alarms.get(i).year);
         }
 
+        //Log.i("yo", "2");
         getContract().setWork(workList, index);
         arrayAdapter.notifyDataSetChanged();
 
-
-
-
         super.onPause();
     }
-
-
 
     public interface CallMain {
         public void setWork(ArrayList<Work> toSet, int index);
 
     }
-
-
 }

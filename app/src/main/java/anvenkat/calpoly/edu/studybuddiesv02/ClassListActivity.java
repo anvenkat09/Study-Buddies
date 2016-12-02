@@ -7,10 +7,12 @@ import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -39,8 +41,6 @@ class Class implements Parcelable {
     ArrayList<Work> work = new ArrayList<Work>(); //holds the stuff that is due
     String classname; //holds the name of the class
 
-
-
     public Class(String name){
         this.classname = name;
     }
@@ -64,8 +64,6 @@ class Class implements Parcelable {
     public int describeContents(){
         return 0;
     }
-
-
 
     public void writeToParcel(Parcel out, int flags){
         out.writeTypedList(work);
@@ -142,6 +140,7 @@ class Work implements Parcelable{
     public int describeContents(){
         return 0;
     }
+
     public void writeToParcel(Parcel out, int flags){
         out.writeString(toDo);
         boolean[] arr = new boolean[1];
@@ -241,6 +240,30 @@ public class ClassListActivity extends AppCompatActivity implements ClassDetailF
         if (findViewById(R.id.class_detail_container) != null) {
             mTwoPane = true;
         }
+
+        /**
+         * swipe left/right to delete
+         */
+        ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT){
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target){
+                return false;
+            }
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+                if (direction == ItemTouchHelper.RIGHT || direction == ItemTouchHelper.LEFT) {
+                    int index = viewHolder.getAdapterPosition();
+                    FragmentManager fragmentManager = getSupportFragmentManager();
+                    ClassDetailFragment fragment = (ClassDetailFragment)fragmentManager.findFragmentById(R.id.class_detail_container);
+                    if(fragment != null){
+                        getSupportFragmentManager().beginTransaction().remove(fragment).commit();
+                    }
+                    classes.remove(index);
+                    currPos = -1;
+                    set.notifyDataSetChanged();
+                }
+            }
+        };
+        new ItemTouchHelper(simpleCallback).attachToRecyclerView(r);
     }
 
     /**
@@ -264,6 +287,7 @@ public class ClassListActivity extends AppCompatActivity implements ClassDetailF
      */
     protected void onActivityResult(int requestCode, int resultCode, Intent returnedIntent){
         activityReturned = true;
+        Log.i("sup", "i'm on activity result");
         if(resultCode == RESULT_OK){
             switch(requestCode){
                 case REQUEST_CODE_ADD_CLASS:
@@ -273,11 +297,19 @@ public class ClassListActivity extends AppCompatActivity implements ClassDetailF
                     set.notifyDataSetChanged();
                     break;
                 case REQUEST_CODE_ADD_WORK:
-                    ArrayList<Work>workList = returnedIntent.getExtras().getParcelableArrayList("workList");
-                    int idx = returnedIntent.getExtras().getInt("index");
-                    classes.get(idx).setWork(workList);
-                    set.notifyDataSetChanged();
-
+                    //Log.i("yo", "yo");
+                    //ArrayList<Work>workList = returnedIntent.getExtras().getParcelableArrayList("workList");
+                    //worklist ends up being null when rotated
+                    //Log.i("yo", workList.get(0).getToDo());
+                    //int idx = returnedIntent.getExtras().getInt("index");
+                    Bundle b = returnedIntent.getExtras();
+                    if(b!= null) {
+                        ArrayList<Work> workList = b.getParcelableArrayList("workList");
+                        int idx = b.getInt("index");
+                        classes.get(idx).setWork(workList);
+                        set.notifyItemChanged(idx);
+                        set.notifyDataSetChanged();
+                    }
                     break;
                 default:
                     break;
@@ -347,17 +379,16 @@ public class ClassListActivity extends AppCompatActivity implements ClassDetailF
 
     //On Pause, assume the device is closing. When a pause occurs write the current class list
     //to a file
-    protected void onPause(){
+    protected void onStop(){
         Gson gson = new Gson();
         String toStore = gson.toJson(classes);
         writeToFile(toStore, this);
-        super.onPause();
+        super.onStop();
     }
 
     //On resume restore the app from the file  UNLESS an activity just returned!!
-    protected void onResume(){
+    protected void onStart(){
         Gson gson = new Gson();
-
         //Dont read from file if an activity returned
         //This will cause overwrites from the file instead of adding to the array what the activity actually returns
         if(!activityReturned) {
@@ -382,7 +413,7 @@ public class ClassListActivity extends AppCompatActivity implements ClassDetailF
             //if the activity just returned, no need to read from the file, just unset the flag
             activityReturned = false;
         }
-        super.onResume();
+        super.onStart();
 
     }
 
@@ -490,7 +521,5 @@ public class ClassListActivity extends AppCompatActivity implements ClassDetailF
 
         }
     }
-
-
 
 }
