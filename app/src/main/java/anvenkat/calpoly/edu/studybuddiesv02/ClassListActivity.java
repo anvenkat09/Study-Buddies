@@ -40,6 +40,7 @@ import java.util.ArrayList;
 class Class implements Parcelable {
     ArrayList<Work> work = new ArrayList<Work>(); //holds the stuff that is due
     String classname; //holds the name of the class
+    int progress = 0;
 
     public Class(String name){
         this.classname = name;
@@ -51,6 +52,14 @@ class Class implements Parcelable {
 
     public String getClassName(){
         return classname;
+    }
+
+    public int getProgress(){
+        return progress;
+    }
+
+    public void setProgress(int progressVal){
+        this.progress = progressVal;
     }
 
     public void setWork(ArrayList<Work> work){
@@ -68,11 +77,13 @@ class Class implements Parcelable {
     public void writeToParcel(Parcel out, int flags){
         out.writeTypedList(work);
         out.writeString(classname);
+        out.writeInt(progress);
     }
 
     public Class(Parcel in) {
         in.readTypedList(work, Work.CREATOR);
         classname = in.readString();
+        progress = in.readInt();
     }
 
     public static final Parcelable.Creator<Class> CREATOR = new Parcelable.Creator<Class>(){
@@ -287,7 +298,6 @@ public class ClassListActivity extends AppCompatActivity implements ClassDetailF
      */
     protected void onActivityResult(int requestCode, int resultCode, Intent returnedIntent){
         activityReturned = true;
-        Log.i("sup", "i'm on activity result");
         if(resultCode == RESULT_OK){
             switch(requestCode){
                 case REQUEST_CODE_ADD_CLASS:
@@ -306,9 +316,10 @@ public class ClassListActivity extends AppCompatActivity implements ClassDetailF
                     if(b!= null) {
                         ArrayList<Work> workList = b.getParcelableArrayList("workList");
                         int idx = b.getInt("index");
-                        classes.get(idx).setWork(workList);
-                        set.notifyItemChanged(idx);
-                        set.notifyDataSetChanged();
+                        //classes.get(idx).setWork(workList);
+                        setWork(workList, idx);
+                        //set.notifyItemChanged(idx);
+                        //set.notifyDataSetChanged();
                     }
                     break;
                 default:
@@ -420,6 +431,18 @@ public class ClassListActivity extends AppCompatActivity implements ClassDetailF
     @Override
     public void setWork(ArrayList<Work> toSet, int index) {
         classes.get(index).setWork(new ArrayList<Work>(toSet));
+        //Log.i("wat", "wat");
+        int finishedCount = 0;
+        for (int i = 0; i < toSet.size(); i++){
+            finishedCount += toSet.get(i).getCompleted() ? 1 : 0;
+        }
+        if(finishedCount > 0) {
+            classes.get(index).setProgress(100 * finishedCount / toSet.size());
+        }
+        else{
+            classes.get(index).setProgress(0);
+        }
+        set.notifyItemChanged(index);
     }
 
     /**
@@ -509,17 +532,7 @@ public class ClassListActivity extends AppCompatActivity implements ClassDetailF
         public void bind(Class option) {
             this.classData = option;
             textd.setText(classData.getClassName());
-            int finishedCount = 0;
-            try {
-                for (int i = 0; i < classData.getWork().size(); i++)
-                    finishedCount += classData.getWork().get(i).getCompleted() ? 1 : 0;
-
-            progress.setProgress(100*finishedCount/classData.getWork().size()); //currently displays as 50%
-            }catch (Exception E){
-                //E.printStackTrace();
-            }
-
+            progress.setProgress(classData.getProgress()); //currently displays as 0%
         }
     }
-
 }
