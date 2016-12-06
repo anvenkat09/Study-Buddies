@@ -5,22 +5,22 @@
     <item
         android:id="@+id/calendar"
         app:showAsAction="always"
-        android:title="Courses"
-        android:icon="@drawable/ic_today_black_24dp">
+        android:title="Calendar"
+        android:icon="@drawable/ic_calendar_white">
     </item>
 
     <item
         android:id="@+id/courses"
         app:showAsAction="always"
-        android:title="Calendar"
-        android:icon="@drawable/ic_home_black_24dp">
+        android:title="Courses"
+        android:icon="@drawable/ic_home_white">
     </item>
 
     <item
         android:id="@+id/settings"
         app:showAsAction="always"
         android:title="Settings"
-        android:icon="@drawable/ic_settings_black_24dp">
+        android:icon="@drawable/ic_settings_white">
     </item>
 
 </menu>

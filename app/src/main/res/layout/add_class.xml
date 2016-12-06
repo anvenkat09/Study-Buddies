@@ -3,18 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/secondLayout"
-    android:paddingBottom="16dp"
-    android:paddingLeft="64dp"
-    android:paddingRight="64dp"
-    android:paddingTop="16dp"
+    android:padding="8dp"
     android:orientation="vertical">
-
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/inputClass"
-        android:hint="Enter Class Name..."
-        android:layout_centerInParent="true"/>
 
     <Button
         android:layout_width="wrap_content"
@@ -23,5 +13,14 @@
         android:layout_centerInParent="true"
         android:text="Add Class"
         android:id="@+id/confirm"/>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/inputClass"
+        android:hint="Enter Class Name..."
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
 </RelativeLayout>

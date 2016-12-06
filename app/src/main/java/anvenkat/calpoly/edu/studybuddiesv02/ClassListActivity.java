@@ -478,7 +478,7 @@ public class ClassListActivity extends AppCompatActivity implements ClassDetailF
         public void onBindViewHolder(ClassHolder holder, final int position) {
             final Class c = classes.get(position);
             if (currPos == position) {
-                holder.itemView.setBackgroundColor(Color.YELLOW);
+                holder.itemView.setBackgroundColor(Color.parseColor("#C5CAE9"));
             } else {
                 holder.itemView.setBackgroundColor(Color.TRANSPARENT);
             }
