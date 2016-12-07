@@ -19,6 +19,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -31,6 +32,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 /**
  * Class "Class" which allows us to instantiate an object of type class. It can hold the name of
@@ -521,18 +523,41 @@ public class ClassListActivity extends AppCompatActivity implements ClassDetailF
     public class ClassHolder extends RecyclerView.ViewHolder {
         private TextView textd;
         private ProgressBar progress;
+        private ImageView alert;
+
         public Class classData;
 
         public ClassHolder(View view) {
             super(view);
             textd = (TextView) itemView.findViewById(R.id.className);
             progress = (ProgressBar) itemView.findViewById(R.id.progress);
+            alert = (ImageView)itemView.findViewById(R.id.alertStatus);
         }
 
         public void bind(Class option) {
             this.classData = option;
             textd.setText(classData.getClassName());
             progress.setProgress(classData.getProgress()); //currently displays as 0%
+            checkClass();
+        }
+
+        public void checkClass(){
+            ArrayList<Work> w = classData.getWork();
+            Calendar today = Calendar.getInstance();
+            boolean fail = false;
+            for(Work temp: w) {
+                Log.e("hit", temp.getDay() + " " + today.getTime().getDate() + " " +  today.getTime().getMonth() + " " + temp.getMonth() + " " + today.get(Calendar.YEAR) + " "+ temp.getYear());
+                int year = today.get(Calendar.YEAR);
+                if(!temp.getCompleted() && temp.getDay() - today.getTime().getDate() <= 1 && temp.getDay() - today.getTime().getDate() >= 0 && today.getTime().getMonth() == temp.getMonth() && year ==  (temp.getYear()))
+                    fail = true;
+            }
+            if(fail) {
+                Log.e("hit", "checkclass did fail");
+
+                alert.setVisibility(View.VISIBLE);
+            }else {
+                alert.setVisibility(View.INVISIBLE);
+            }
         }
     }
 }
