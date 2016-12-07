@@ -32,4 +32,11 @@
         android:id="@+id/cancel"
         android:src="@drawable/ic_cancel"/>
 
+    <ImageButton
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:id="@+id/delete"
+        android:src="@drawable/ic_delete_black_24dp"/>
+
+
 </LinearLayout>

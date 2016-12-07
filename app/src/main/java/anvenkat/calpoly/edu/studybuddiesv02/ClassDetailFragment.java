@@ -2,10 +2,12 @@ package anvenkat.calpoly.edu.studybuddiesv02;
 
 import android.app.Activity;
 import android.app.AlarmManager;
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -137,7 +139,7 @@ public class ClassDetailFragment extends ContractFragment<ClassDetailFragment.Ca
         private int positionTag, cancelTag;
         PendingIntent intentV;
         Intent intent;
-        private ImageButton setDT, setAlarm, cancelAlarm;
+        private ImageButton setDT, setAlarm, cancelAlarm, delete;
 
         public WorkAdapter(Context context, ArrayList<Work> workList){
             super(context, 0, workList);
@@ -154,7 +156,7 @@ public class ClassDetailFragment extends ContractFragment<ClassDetailFragment.Ca
             return workList.size();
         }
 
-        public View getView(int position, View convertView, ViewGroup parent){
+        public View getView(final int position, final View convertView, ViewGroup parent){
             LayoutInflater inf = LayoutInflater.from(getContext());
             View menuL = inf.inflate(R.layout.class_detail_workview_detail, parent, false);
 
@@ -166,6 +168,8 @@ public class ClassDetailFragment extends ContractFragment<ClassDetailFragment.Ca
 
             cancelAlarm = (ImageButton)menuL.findViewById(R.id.cancel);
             cancelAlarm.setTag(position);
+
+            delete = (ImageButton)menuL.findViewById(R.id.delete);
 
             final Work w = getItem(position);
             workName.setText(w.getToDo().toString());
@@ -207,6 +211,29 @@ public class ClassDetailFragment extends ContractFragment<ClassDetailFragment.Ca
                     if (pendingIntent != null) {
                         pendingIntent.cancel();
                     }
+                }
+            });
+
+            delete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    new AlertDialog.Builder(getContext())
+                            .setTitle("Delete entry")
+                            .setMessage("Are you sure you want to delete this entry?")
+                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    workList.remove(position);
+                                    arrayAdapter.notifyDataSetChanged();
+                                }
+                            })
+                            .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    // do nothing
+                                }
+                            })
+                            .setIcon(android.R.drawable.ic_dialog_alert)
+                            .show();
+
                 }
             });
 
