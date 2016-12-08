@@ -339,10 +339,10 @@ public class ClassListActivity extends AppCompatActivity implements ClassDetailF
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
         switch(item.getItemId()){
-            case R.id.courses:
+            /*case R.id.courses:
                 Intent i = new Intent(this, ClassListActivity.class);
                 startActivity(i);
-                break;
+                break;*/
             case R.id.calendar:
                 Intent calendarStarter = new Intent(getApplicationContext(), CalendarActivity.class);
                 calendarStarter.putParcelableArrayListExtra("classes", classes);
@@ -480,7 +480,7 @@ public class ClassListActivity extends AppCompatActivity implements ClassDetailF
         public void onBindViewHolder(ClassHolder holder, final int position) {
             final Class c = classes.get(position);
             if (currPos == position) {
-                holder.itemView.setBackgroundColor(Color.parseColor("#C5CAE9"));
+                holder.itemView.setBackgroundColor(Color.parseColor("#CAEBF2"));
             } else {
                 holder.itemView.setBackgroundColor(Color.TRANSPARENT);
             }

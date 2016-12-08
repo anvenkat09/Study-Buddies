@@ -9,7 +9,7 @@
         android:icon="@drawable/ic_calendar_white">
     </item>
 
-    <item
+    <!--<item
         android:id="@+id/courses"
         app:showAsAction="always"
         android:title="Courses"
@@ -21,6 +21,6 @@
         app:showAsAction="always"
         android:title="Settings"
         android:icon="@drawable/ic_settings_white">
-    </item>
+    </item>-->
 
 </menu>
