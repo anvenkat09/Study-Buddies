@@ -209,6 +209,7 @@ public class ClassDetailFragment extends ContractFragment<ClassDetailFragment.Ca
                     intent = new Intent(getContext(), NotificationBroadcaster.class);
                     final PendingIntent pendingIntent = PendingIntent.getBroadcast(getContext(), cancelTag, intent, PendingIntent.FLAG_NO_CREATE);
                     if (pendingIntent != null) {
+                        Toast.makeText(getContext(), "Cancelled Alarm", Toast.LENGTH_SHORT).show();
                         pendingIntent.cancel();
                     }
                 }
