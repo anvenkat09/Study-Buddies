@@ -27,21 +27,21 @@
         android:layout_height="@dimen/detail_button"
         android:id="@+id/setDateAndTime"
         android:src="@drawable/ic_set_alarm_blue"
-        android:background="@color/colorBackground"/>
+        android:background="?attr/selectableItemBackground"/>
 
     <ImageButton
         android:layout_width="@dimen/detail_button"
         android:layout_height="@dimen/detail_button"
         android:id="@+id/cancel"
         android:src="@drawable/ic_cancel_alarm_blue"
-        android:background="@color/colorBackground"/>
+        android:background="?attr/selectableItemBackground"/>
 
     <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="@dimen/detail_button"
         android:id="@+id/delete"
         android:src="@drawable/ic_delete_work_blue"
-        android:background="@color/colorBackground"/>
+        android:background="?attr/selectableItemBackground"/>
 
 
 </LinearLayout>

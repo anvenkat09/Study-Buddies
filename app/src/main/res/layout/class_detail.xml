@@ -23,11 +23,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Add Work"
+        android:textColor="@color/colorPrimary"
         android:id="@+id/confirmWork"
         android:layout_alignBaseline="@+id/addNewWork"
         android:layout_alignBottom="@+id/addNewWork"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:background="?attr/selectableItemBackground"/>
 
     <ListView
         android:layout_width="match_parent"
@@ -35,5 +37,11 @@
         android:layout_below="@+id/addNewWork"
         android:id="@+id/workView">
     </ListView>
+
+    <!--<ImageView
+        android:layout_width="@dimen/background_item"
+        android:layout_height="@dimen/background_item"
+        android:layout_centerInParent="true"
+        android:src="@drawable/ic_pen_blue"/>-->
 
 </RelativeLayout>

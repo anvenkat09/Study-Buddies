@@ -12,6 +12,8 @@
         android:layout_below="@+id/inputClass"
         android:layout_centerInParent="true"
         android:text="Add Class"
+        android:textColor="@color/colorPrimary"
+        android:background="?attr/selectableItemBackground"
         android:id="@+id/confirm" />
 
     <EditText

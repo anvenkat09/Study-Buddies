@@ -212,6 +212,9 @@ public class ClassDetailFragment extends ContractFragment<ClassDetailFragment.Ca
                         Toast.makeText(getContext(), "Cancelled Alarm", Toast.LENGTH_SHORT).show();
                         pendingIntent.cancel();
                     }
+                    else {
+                        Toast.makeText(getContext(), "Alarm Not Set", Toast.LENGTH_SHORT).show();
+                    }
                 }
             });
 
