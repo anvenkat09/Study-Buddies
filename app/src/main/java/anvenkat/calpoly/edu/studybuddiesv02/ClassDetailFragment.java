@@ -223,7 +223,7 @@ public class ClassDetailFragment extends ContractFragment<ClassDetailFragment.Ca
                 public void onClick(View v) {
                     new AlertDialog.Builder(getContext())
                             .setTitle("Delete entry")
-                            .setMessage("Are you sure you want to delete this entry?")
+                            .setMessage("Are you sure you want to delete " + workList.get(position).getToDo()+ "?")
                             .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {
                                     workList.remove(position);

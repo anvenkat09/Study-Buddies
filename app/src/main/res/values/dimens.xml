@@ -8,6 +8,7 @@
     <dimen name="action_bar_height">56dp</dimen>
     <dimen name="progress_bar_padding">16dp</dimen>
     <dimen name="background_item">100dp</dimen>
-    <dimen name="class_list_fragment_size">200dp</dimen>
+    <dimen name="class_list_fragment_720dp">240dp</dimen>
+    <dimen name="class_list_fragment_600dp">200dp</dimen>
     <dimen name="divider_size">1dp</dimen>
 </resources>
