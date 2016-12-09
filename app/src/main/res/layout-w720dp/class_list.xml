@@ -4,11 +4,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:baselineAligned="false"
-    android:divider="?android:attr/dividerHorizontal"
+    android:divider="@drawable/divider"
     android:orientation="horizontal"
     android:showDividers="middle"
     tools:context="anvenkat.calpoly.edu.studybuddiesv02.ClassListActivity">
-
+    <!--android:divider="?android:attr/dividerHorizontal"-->
     <!--
     This layout is a two-pane layout for the Classes
     master/detail flow.
